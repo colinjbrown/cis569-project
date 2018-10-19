@@ -7,10 +7,18 @@
 	padding: 10px;
     height: auto;
     min-height: 500px;
-    
-    
-    
- /* Should be removed. Only for demonstration */
+    float: left;
+    width: 33.33%;
+    background-color:#aaa;
+
+}
+
+.hover {
+    background-color: #ccc;
+}
+
+p.active-doc{
+    background-color: #eee;
 }
 
 /* Clear floats after the columns */
