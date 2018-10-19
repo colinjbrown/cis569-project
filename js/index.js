@@ -20,6 +20,7 @@ $(document).ready(function(){
                 return d.replace('.','')+'-li';
             })
             .classed('documentid', true)
+            .classed('list-group-item',true)
             .html(function (d) {
                 return d;
             }).on('mouseover', function () {
@@ -32,24 +33,24 @@ $(document).ready(function(){
                 {
                     if($("#" + d.replace('.','')).length == 0) {
 
-                        doc_div = d3.select('#wp').append('div').classed('drag',true).attr('id',function (){return d.replace('.','');});
+                        doc_div = d3.select('#wp').append('div').classed('drag',true).classed('card',true).attr('id',function (){return d.replace('.','');});
 
-                        doc_div.append('h3').html(d).classed('label',true);
+                        doc_div.append('h3').html(d).classed('card-header',true).classed('primary-color',true).classed('white-text',true).classed('label',true);
 
-                        doc_div.append('div').html(function () {
+                        doc_div.append('div').classed('card-body',true).html(function () {
                             return data[d];
                         })
 
                         $('#'+d.replace('.','')).unbind('draggable').draggable({stack:'.drag',containment: "parent"}).dblclick(function(){
                             $(this).remove();
-                            $('#'+d.replace('.','')+'-li').toggleClass('active-doc');
+                            $('#'+d.replace('.','')+'-li').toggleClass('active');
                             //$("#p1").css("background-color", "#aaa");
                         });
                     }
                     else{
                         $('#'+d.replace('.','')).remove();
                     }
-                    $('#'+d.replace('.','')+'-li').toggleClass('active-doc');
+                    $('#'+d.replace('.','')+'-li').toggleClass('active');
                 }
             )
         ;

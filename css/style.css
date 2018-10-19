@@ -7,14 +7,15 @@
 	padding: 10px;
     height: auto;
     min-height: 500px;
-    float: left;
-    width: 33.33%;
-    background-color:#aaa;
+    width: 15vw;
+    margin-left:5vw;
+    background-color:#eee;
 
 }
 
 /* Make the heights of workplace and document ID place be equal*/
 .row{
+    margin-right:5vw;
     display: -webkit-box;      /* OLD - iOS 6-, Safari 3.1-6 */
     display: -moz-box;         /* OLD - Firefox 19- (buggy but mostly works) */
     display: -ms-flexbox;      /* TWEENER - IE 10 */
@@ -28,6 +29,10 @@
 
 p.active-doc{
     background-color: #eee;
+}
+
+h2.primary-color{
+    text-align: center;
 }
 
 h3.label{
@@ -44,6 +49,15 @@ h3.label{
     background-color:#ccc;
 }
 
-#sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
-#sortable li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }
-html>body #sortable li { height: 1.5em; line-height: 1.2em; }
+#sortable li {
+    text-align: center;
+    list-style-type: none;
+}
+
+#wp {
+    width:65vw;
+    background-color:#ddd;
+}
+/*#sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }*/
+/*#sortable li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }*/
+/*html>body #sortable li { height: 1.5em; line-height: 1.2em; }*/
