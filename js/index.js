@@ -1,151 +1,61 @@
 
 $(document).ready(function(){
-    $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
 
-    $(".documentid").hover(function(){
-        $(this).css("background-color", "#ccc");
-    },
-    function(){
-        $(this).css("background-color", "#aaa");
-    });
+    d3.json("https://raw.githubusercontent.com/colinjbrown/cis569-project1/master/data/data.json").then(function(data) {
 
-    $( function(){
+
+        var docs = Object.keys(data);
+
+        var doc_list = d3.select('ul').selectAll('li').data(docs);
+
+        /*
+        Just so you know the replace ('.','') is to ensure that the id meets css id valid standards in HTML4
+        ID and NAME tokens must begin with a letter ([A-Za-z]) and may be followed by any number of letters, digits ([0-9]), hyphens ("-"), underscores ("_"), colons (":"), and periods (".").
+         */
+
+        doc_list
+            .enter()
+            .append('li')
+            .append('p').attr('id',function (d) {
+                return d.replace('.','')+'-li';
+            })
+            .classed('documentid', true)
+            .html(function (d) {
+                return d;
+            }).on('mouseover', function () {
+            $(this).toggleClass("hover", true);
+            })
+            .on('mouseout', function () {
+                $(this).toggleClass("hover", false);
+            })
+            .on('click', function(d)
+                {
+                    if($("#" + d.replace('.','')).length == 0) {
+
+                        d3.select('#wp').append('div').classed('drag',true).html(function () {
+                            return data[d];
+                        }).attr('id',function (){return d.replace('.','');});
+
+                        $('#'+d.replace('.','')).unbind('draggable').draggable({containment: "parent"}).dblclick(function(){
+                            $(this).remove();
+                            $('#'+d.replace('.','')+'-li').toggleClass('active-doc');
+                            //$("#p1").css("background-color", "#aaa");
+                        });
+                    }
+                    else{
+                        $('#'+d.replace('.','')).remove();
+                    }
+                    $('#'+d.replace('.','')+'-li').toggleClass('active-doc');
+                }
+            )
+        ;
+
+    //$( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
+
         $( "#sortable" ).sortable();
         $( "#sortable" ).disableSelection();
-    });
-     
 
-    $("#p1").click(function (){
-    
-        $("#wp").append(" <div class='drag'>document 1</div>");
-        $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
-        $(".drag").dblclick(function(){
-            $(this).hide();
-            $("#p1").css("background-color", "#aaa");
-           
-        });
-        $(this).css("background-color", "#ccc");
-        
-        $(this).unbind("click").click();
-
-        $(this).unbind("mouseenter").mouseenter();
-
-        $(this).unbind("mouseleave").mouseleave();
     });
 
-    $("#p2").click(function(){
-    
-        $("#wp").append(" <div class='drag'>document 2</div>");
-        $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
-        $(".drag").dblclick(function(){$(this).hide();});
-        $(this).css("background-color", "#ccc");
-        
-        $(this).unbind("click").click();
-
-        $(this).unbind("mouseenter").mouseenter();
-
-        $(this).unbind("mouseleave").mouseleave();
-    });
-
-    $("#p3").click(function(){
-    
-        $("#wp").append(" <div class='drag'>document 3</div>");
-        $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
-        $(".drag").dblclick(function(){$(this).hide();});
-        $(this).css("background-color", "#ccc");
-        
-        $(this).unbind("click").click();
-
-        $(this).unbind("mouseenter").mouseenter();
-
-        $(this).unbind("mouseleave").mouseleave();
-    });
-
-    $("#p4").click(function(){
-    
-        $("#wp").append(" <div class='drag'>document 4</div>");
-        $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
-        $(".drag").dblclick(function(){$(this).hide();});
-        $(this).css("background-color", "#ccc");
-        
-        $(this).unbind("click").click();
-
-        $(this).unbind("mouseenter").mouseenter();
-
-        $(this).unbind("mouseleave").mouseleave();
-    });
-
-    $("#p5").click(function(){
-    
-        $("#wp").append(" <div class='drag'>document 5</div>");
-        $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
-        $(".drag").dblclick(function(){$(this).hide();});
-        $(this).css("background-color", "#ccc");
-        
-        $(this).unbind("click").click();
-
-        $(this).unbind("mouseenter").mouseenter();
-
-        $(this).unbind("mouseleave").mouseleave();
-    });
-    
-    $("#p6").click(function(){
-    
-        $("#wp").append(" <div class='drag'>document 6</div>");
-        $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
-        $(".drag").dblclick(function(){$(this).hide();});
-        $(this).css("background-color", "#ccc");
-        
-        $(this).unbind("click").click();
-
-        $(this).unbind("mouseenter").mouseenter();
-
-        $(this).unbind("mouseleave").mouseleave();
-    });
-
-    $("#p7").click(function(){
-    
-        $("#wp").append(" <div class='drag'>document 7</div>");
-        $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
-        $(".drag").dblclick(function(){$(this).hide();});
-        $(this).css("background-color", "#ccc");
-        
-        $(this).unbind("click").click();
-
-        $(this).unbind("mouseenter").mouseenter();
-
-        $(this).unbind("mouseleave").mouseleave();
-    });
-
-    $("#p8").click(function(){
-    
-        $("#wp").append(" <div class='drag'>document 8</div>");
-        $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
-        $(".drag").dblclick(function(){$(this).hide();});
-        $(this).css("background-color", "#ccc");
-        
-        $(this).unbind("click").click();
-
-        $(this).unbind("mouseenter").mouseenter();
-
-        $(this).unbind("mouseleave").mouseleave();
-    });
-
-    $("#p9").click(function(){
-    
-        $("#wp").append(" <div class='drag'>document 9</div>");
-        $( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
-        $(".drag").dblclick(function(){$(this).hide();});
-
-        $(this).css("background-color", "#ccc");
-        
-        $(this).unbind("click").click();
-
-        $(this).unbind("mouseenter").mouseenter();
-
-        $(this).unbind("mouseleave").mouseleave();
-    });
-
-    
     
 });
