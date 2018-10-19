@@ -13,6 +13,11 @@
 
 }
 
+/* Make the heights of workplace and document ID place be equal*/
+.row{
+    display: -webkit-box;
+}
+
 .hover {
     background-color: #ccc;
 }
