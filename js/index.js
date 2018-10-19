@@ -32,11 +32,15 @@ $(document).ready(function(){
                 {
                     if($("#" + d.replace('.','')).length == 0) {
 
-                        d3.select('#wp').append('div').classed('drag',true).html(function () {
-                            return data[d];
-                        }).attr('id',function (){return d.replace('.','');});
+                        doc_div = d3.select('#wp').append('div').classed('drag',true).attr('id',function (){return d.replace('.','');});
 
-                        $('#'+d.replace('.','')).unbind('draggable').draggable({containment: "parent"}).dblclick(function(){
+                        doc_div.append('h3').html(d).classed('label',true);
+
+                        doc_div.append('div').html(function () {
+                            return data[d];
+                        })
+
+                        $('#'+d.replace('.','')).unbind('draggable').draggable({stack:'.drag',containment: "parent"}).dblclick(function(){
                             $(this).remove();
                             $('#'+d.replace('.','')+'-li').toggleClass('active-doc');
                             //$("#p1").css("background-color", "#aaa");
