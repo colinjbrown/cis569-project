@@ -1,0 +1,25 @@
+* {
+    box-sizing: border-box;
+}
+
+/* Create two columns that floats next to each other */
+.column {
+	padding: 10px;
+    height: auto;
+    min-height: 500px;
+    
+    
+    
+ /* Should be removed. Only for demonstration */
+}
+
+/* Clear floats after the columns */
+
+
+.drag{
+    width:auto; height:auto; padding: 0.5em; background-color:#ccc;
+}
+
+#sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }
+#sortable li { margin: 0 5px 5px 5px; padding: 5px; font-size: 1.2em; height: 1.5em; }
+html>body #sortable li { height: 1.5em; line-height: 1.2em; }
