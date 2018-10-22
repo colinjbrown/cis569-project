@@ -40,7 +40,9 @@ h3.label{
 }
 
 /* Clear floats after the columns */
-
+.list-group-item.hover{
+    background-color: #ccc;
+}
 
 .drag{
     width:50%;
