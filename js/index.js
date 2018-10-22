@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
 
-    d3.json("https://raw.githubusercontent.com/colinjbrown/cis569-project1/master/data/data.json").then(function(data) {
+    d3.json("https://raw.githubusercontent.com/colinjbrown/cis569-project1/master/data.json").then(function(data) {
 
 
         var docs = Object.keys(data);
