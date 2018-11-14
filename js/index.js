@@ -1,7 +1,7 @@
 
 $(document).ready(function(){
 
-    d3.json("https://raw.githubusercontent.com/colinjbrown/cis569-project1/master/data.json").then(function(data) {
+    d3.json("https://raw.githubusercontent.com/colinjbrown/cis569-project1/master/reduced-data.json").then(function(data) {
 
 
         var docs = Object.keys(data);
@@ -43,7 +43,7 @@ $(document).ready(function(){
                         doc_div.append('h3').html(d).classed('card-header',true).classed('primary-color',true).classed('white-text',true).classed('label',true);
 
                         doc_div.append('div').classed('card-body',true).html(function () {
-                            return data[d];
+                            return data[d]["Text"];
                         })
                         //let the document item can be draggable in the workplace, and user can delete it by double click.
                         $('#'+d.replace('.','')).unbind('draggable').draggable({stack:'.drag',containment: "parent"}).dblclick(function(){
