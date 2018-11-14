@@ -8,7 +8,7 @@
     height: auto;
     min-height: 500px;
     width: 15vw;
-    margin-left:5vw;
+    margin-left:1vw;
     background-color:#eee;
 
 }
@@ -56,8 +56,8 @@ h3.label{
     list-style-type: none;
 }
 
-#wp {
-    width:65vw;
+#wp, #viz {
+    width:40vw;
     background-color:#ddd;
 }
 /*#sortable { list-style-type: none; margin: 0; padding: 0; width: 60%; }*/
