@@ -25,7 +25,7 @@ $(document).ready(function(){
                          .attr("id", "circles");
 
 
-        var num_clusters = 3;
+        var num_clusters = 7;
 
         // Choosing 5 clusters based on the number of Cylinders
         // Choosing 3 clusters can be interesting for trying to differentiate country of origin
@@ -43,9 +43,12 @@ $(document).ready(function(){
              .attr("class", "hull")
              .attr("id", d => "hull_" + d)
             .on('mouseover',function (f) {
-                console.log(f);
-                console.log(this);
-            });
+                d3.selectAll('.cluster_'+f).attr('stroke','black');
+            }).on('mouseout',function (f) {
+                d3.selectAll('.cluster_'+f).attr('stroke','none');
+        }).on('click',function (f) {
+            console.log(d3.selectAll('.cluster_'+f).data());
+        });
 
 
 
@@ -83,7 +86,7 @@ $(document).ready(function(){
             //display or delete the document in the workplace by click the document ID.
             .on('click', function(d)
                 {
-                    //if the document item don't be displaied, display it.
+                    //if the document item isn't displayed, display it.
                     if($("#" + d.replace('.','')).length == 0) {
                         //try to creat the document in the workplace.
                         doc_div = d3.select('#wp').append('div').classed('drag',true).classed('card',true).attr('id',function (){return d.replace('.','');});
