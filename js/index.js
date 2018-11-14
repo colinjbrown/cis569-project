@@ -27,10 +27,7 @@ $(document).ready(function(){
 
         var num_clusters = 7;
 
-        // Choosing 5 clusters based on the number of Cylinders
-        // Choosing 3 clusters can be interesting for trying to differentiate country of origin
-        //After choosing different cluster values 3 seems to provide the most interesting results
-        //due to low value counts of certain cylinder values
+
         var clusters = d3.range(0, num_clusters).map((n) => n.toString());
 
         // costs for each iteration
@@ -47,8 +44,37 @@ $(document).ready(function(){
             }).on('mouseout',function (f) {
                 d3.selectAll('.cluster_'+f).attr('stroke','none');
         }).on('click',function (f) {
-            console.log(d3.selectAll('.cluster_'+f).data());
+
+            d3.selectAll('.cluster_'+f).data().forEach(function (d) {
+                openWSDocument(true,d['File Name'],d['Text']);
+            });
         });
+
+        function openWSDocument(removeFlag,d,text)
+        {
+            //if the document item isn't displayed, display it.
+                    if($("#" + d.replace('.','')).length == 0) {
+                        //try to creat the document in the workplace.
+                        doc_div = d3.select('#wp').append('div').classed('drag',true).classed('card',true).attr('id',function (){return d.replace('.','');});
+
+                        doc_div.append('h3').html(d).classed('card-header',true).classed('primary-color',true).classed('white-text',true).classed('label',true);
+
+                        doc_div.append('div').classed('card-body',true).html(function () {
+                            return text;
+                        })
+                        //let the document item can be draggable in the workplace, and user can delete it by double click.
+                        $('#'+d.replace('.','')).unbind('draggable').draggable({stack:'.drag',containment: "parent"}).dblclick(function(){
+                            $(this).remove();
+                            $('#'+d.replace('.','')+'-li').toggleClass('active'); //Change the color of the ID box.
+                            //$("#p1").css("background-color", "#aaa");
+                        });
+                    }
+                    //if the document has been displaied, delete it.
+                    else if (removeFlag){
+                        $('#'+d.replace('.','')).remove();
+                    }
+                    $('#'+d.replace('.','')+'-li').toggleClass('active');
+        }
 
 
 
@@ -58,6 +84,13 @@ $(document).ready(function(){
         var docs = Object.keys(data);
 
         var doc_list = d3.select('ul').selectAll('li').data(docs);
+
+
+
+
+
+
+
 
         /*
         Just so you know the replace ('.','') is to ensure that the id meets css id valid standards in HTML4
@@ -86,28 +119,8 @@ $(document).ready(function(){
             //display or delete the document in the workplace by click the document ID.
             .on('click', function(d)
                 {
-                    //if the document item isn't displayed, display it.
-                    if($("#" + d.replace('.','')).length == 0) {
-                        //try to creat the document in the workplace.
-                        doc_div = d3.select('#wp').append('div').classed('drag',true).classed('card',true).attr('id',function (){return d.replace('.','');});
+                    openWSDocument(true,d,data[d]['Text']);
 
-                        doc_div.append('h3').html(d).classed('card-header',true).classed('primary-color',true).classed('white-text',true).classed('label',true);
-
-                        doc_div.append('div').classed('card-body',true).html(function () {
-                            return data[d]["Text"];
-                        })
-                        //let the document item can be draggable in the workplace, and user can delete it by double click.
-                        $('#'+d.replace('.','')).unbind('draggable').draggable({stack:'.drag',containment: "parent"}).dblclick(function(){
-                            $(this).remove();
-                            $('#'+d.replace('.','')+'-li').toggleClass('active'); //Change the color of the ID box.
-                            //$("#p1").css("background-color", "#aaa");
-                        });
-                    }
-                    //if the document has been displaied, delete it.
-                    else{
-                        $('#'+d.replace('.','')).remove();
-                    }
-                    $('#'+d.replace('.','')+'-li').toggleClass('active');
                 }
             );
 
