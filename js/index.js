@@ -2,6 +2,17 @@
 $(document).ready(function(){
 
 
+    //Add clear button to empty workspace fast
+    $( function() {
+    $( "#clear" ).button();
+    $( "#clear" ).click( function( event ) {
+      console.log("Clear");
+      $('.drag.card').remove();
+      $('#sortable li p').toggleClass('active',false);
+    } );
+  } );
+
+
     // dims
         var margin = { top: 20, right: 0, bottom: 50, left: 50 },
             svg_dx = 800,
