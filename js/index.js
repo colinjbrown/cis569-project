@@ -57,7 +57,7 @@ $(document).ready(function(){
         }).on('click',function (f) {
 
             d3.selectAll('.cluster_'+f).data().forEach(function (d) {
-                openWSDocument(true,d['File Name'],d['Text']);
+                openWSDocument(false,d['File Name'],d['Text']);
             });
         });
 
@@ -83,6 +83,10 @@ $(document).ready(function(){
                     //if the document has been displaied, delete it.
                     else if (removeFlag){
                         $('#'+d.replace('.','')).remove();
+                    }
+                    else{
+                        //Don't change active class if we're clicking a cluster
+                        return;
                     }
                     $('#'+d.replace('.','')+'-li').toggleClass('active');
         }
