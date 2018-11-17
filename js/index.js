@@ -13,10 +13,20 @@ $(document).ready(function(){
   } );
 
 
+
+        //Ensure active documents are still highlighted in the list post sort
+        function resetActives(){
+            var opendocs = $('#wp').find('.drag');
+            if(opendocs.length){
+                opendocs.map(function(a,b,c){$('#'+$(b).prop('id')+'-li').toggleClass('active')});
+            }
+        }
+
+
     // dims
-        var margin = { top: 20, right: 0, bottom: 50, left: 50 },
-            svg_dx = 800,
-            svg_dy = 400,
+        var margin = { top: 60, right: 0, bottom: 50, left: 50 },
+            svg_dx = 600,
+            svg_dy = 600,
             plot_dx = svg_dx - margin.right - margin.left,
             plot_dy = svg_dy - margin.top - margin.bottom;
 
@@ -96,14 +106,61 @@ $(document).ready(function(){
     d3.json("https://raw.githubusercontent.com/colinjbrown/cis569-project1/master/reduced-data.json").then(function(data) {
 
 
+
+
+        function make_list(docs) {
+
+            var doc_list = d3.select('ul').selectAll('li').data(docs, function(d){return d;});
+
+            doc_list
+                .enter()
+                //Creat document id in the list for each document.
+                .append('li')
+                .append('p').attr('id', function (d) {
+                return d.replace('.', '') + '-li';
+            })
+                .classed('documentid', true)
+                .classed('list-group-item', true)
+                .html(function (d) {
+                    return d;
+                })
+                //let the ID highlight when the mouse on it.
+                .on('mouseover', function () {
+                    $(this).toggleClass("hover", true);
+                })
+                .on('mouseout', function () {
+                    $(this).toggleClass("hover", false);
+                })
+                //display or delete the document in the workplace by click the document ID.
+                .on('click', function (d) {
+                        openWSDocument(true, d, data[d]['Text']);
+
+                    }
+                );
+            resetActives();
+        }
+
+
         var docs = Object.keys(data);
-
-        var doc_list = d3.select('ul').selectAll('li').data(docs);
-
+        make_list(docs);
 
 
 
+        $( function() {
+            //Don't enable until after creating clusters
+            $( "#sort" ).button();
+            $("#sort").toggleClass('isDisabled',true);
+            $( "#sort" ).click( function( event ) {
 
+                if($("#sort").hasClass('isDisabled') == false){
+                  $('#sortable').empty();
+                  //Creates a new mapping based on clusters
+                  var newmap = Array.apply(null, {length: num_clusters}).map(Number.call, Number).reduce(function (p1, p2, p3) { return [...p1, ...d3.selectAll('.cluster_'+p2).data().map(d => d['File Name'])]; },[]);
+                  make_list(newmap);
+                }
+
+            } );
+          } );
 
 
 
@@ -112,32 +169,7 @@ $(document).ready(function(){
         ID and NAME tokens must begin with a letter ([A-Za-z]) and may be followed by any number of letters, digits ([0-9]), hyphens ("-"), underscores ("_"), colons (":"), and periods (".").
          */
 
-        doc_list
-            .enter()
-            //Creat document id in the list for each document.
-            .append('li')
-            .append('p').attr('id',function (d) {
-                return d.replace('.','')+'-li';
-            })
-            .classed('documentid', true)
-            .classed('list-group-item',true)
-            .html(function (d) {
-                return d;
-            })
-            //let the ID highlight when the mouse on it.
-            .on('mouseover', function () {
-            $(this).toggleClass("hover", true);
-            })
-            .on('mouseout', function () {
-                $(this).toggleClass("hover", false);
-            })
-            //display or delete the document in the workplace by click the document ID.
-            .on('click', function(d)
-                {
-                    openWSDocument(true,d,data[d]['Text']);
 
-                }
-            );
 
 
 
@@ -214,6 +246,11 @@ $(document).ready(function(){
 
             cost.append("tspan")
                 .text(formatMin(costs[costs.length - 1]));
+
+
+            //Enable sorting
+            $("#sort").toggleClass('isDisabled',false);
+
 
         }
 
