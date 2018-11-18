@@ -347,8 +347,6 @@ $(document).ready(function(){
 
         function setScaleDomains(d) {
 
-            console.log(d3.extent(d,d => d.x));
-            console.log(d3.extent(d,d => d.y));
              x.domain(d3.extent(d, d => d.x));
              y.domain(d3.extent(d, d => d.y));
         }

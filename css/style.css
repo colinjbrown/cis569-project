@@ -74,12 +74,12 @@ h3.label{
 
 #project-info, #project-details{
     display:inline-block;
-    width:30vw;
+    width:40vw;
     margin-left:2vw;
     margin-right:2vw;
     margin-bottom:2vh;
     margin-top:2vh;
-    height:15vh;
+    height:25vh;
 }
 
 #project-details{
