@@ -30,6 +30,8 @@ $(document).ready(function(){
         }
 
 
+        var original_order, tsne_x, tsne_y;
+
     // dims
         var margin = { top: 60, right: 0, bottom: 50, left: 50 },
             svg_dx = 600,
@@ -114,9 +116,12 @@ $(document).ready(function(){
 
 
 
+
+
         function make_list(docs) {
 
             var doc_list = d3.select('ul').selectAll('li').data(docs, function(d){return d;});
+
 
             doc_list
                 .enter()
@@ -147,8 +152,9 @@ $(document).ready(function(){
         }
 
 
-        var docs = Object.keys(data);
-        make_list(docs);
+        original_order = Object.keys(data);
+
+        make_list(original_order);
 
 
 
@@ -168,6 +174,18 @@ $(document).ready(function(){
             } );
           } );
 
+        $( function() {
+            //Don't enable until after creating clusters
+            $( "#reset" ).button();
+            $( "#reset" ).click( function( event ) {
+
+                  $('#sortable').empty();
+                  make_list(original_order);
+
+            } );
+          } );
+
+
 
 
         /*
@@ -182,6 +200,60 @@ $(document).ready(function(){
         //Change data representation for easier plotting
         //This also uses the ... (spread) operator which is part of ES6
         var d = Object.keys(data).map(function(f){return {'File Name':f, ...data[f]};})
+
+        function compare_x(a, b) {
+            const  tsnea = a.tsne0;
+            const tsneb = b.tsne0;
+
+          let comparison = 0;
+          if (tsnea > tsneb) {
+            comparison = 1;
+          } else if (tsnea < tsneb) {
+            comparison = -1;
+          }
+          return comparison;
+        }
+
+        tsne_x = d.sort(compare_x).map(d => d['File Name']);
+
+        function compare_y(a, b) {
+            const  tsnea = a.tsne1;
+            const tsneb = b.tsne1;
+
+          let comparison = 0;
+          if (tsnea > tsneb) {
+            comparison = 1;
+          } else if (tsnea < tsneb) {
+            comparison = -1;
+          }
+          return comparison;
+        }
+
+        tsne_y = d.sort(compare_y).map(d => d['File Name']);
+
+
+        $( function() {
+            //Don't enable until after creating clusters
+            $( "#tsnex" ).button();
+            $( "#tsnex" ).click( function( event ) {
+
+                  $('#sortable').empty();
+                  make_list(tsne_x);
+
+            } );
+          } );
+
+                $( function() {
+            //Don't enable until after creating clusters
+            $( "#tsney" ).button();
+            $( "#tsney" ).click( function( event ) {
+
+                  $('#sortable').empty();
+                  make_list(tsne_y);
+
+            } );
+          } );
+
 
         //Map principal components to x and y
             d.forEach(d => {
