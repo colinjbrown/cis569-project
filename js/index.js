@@ -30,7 +30,10 @@ $(document).ready(function(){
         }
 
 
+        var done = false;
         var original_order, tsne_x, tsne_y;
+
+        var data_cluster = {};
 
     // dims
         var margin = { top: 60, right: 0, bottom: 50, left: 50 },
@@ -147,7 +150,15 @@ $(document).ready(function(){
                         openWSDocument(true, d, data[d]['Text']);
 
                     }
-                );
+                ).style("color",function (d) {
+                    console.log(done);
+
+                    if(done){
+                        return d3.schemeCategory10[data_cluster[d]];
+                    }
+                    return "black";
+            });
+
             resetActives();
         }
 
@@ -329,6 +340,13 @@ $(document).ready(function(){
             //Enable sorting
             $("#sort").toggleClass('isDisabled',false);
 
+            //This is my favorite piece of code I've ever written...
+            //This creates a dictionary of final clusters and filenames
+            data_cluster = Array.apply(null, {length: num_clusters}).map(Number.call, Number).reduce(function (p1, p2, p3) { return Object.assign({},p1,[,...d3.selectAll('.cluster_'+p2).data().map(d => d['File Name'])].reduce(function(a,d){a[d] = p2; return a},{})); },[]);
+
+
+            done=true;
+
 
         }
 
@@ -401,6 +419,7 @@ $(document).ready(function(){
                 // stash min. distance to compute cost
                 d._dist = dist_min;
 
+                d3.select('#'+d['File Name']+'-li').style('color',d3.color(color).brighter(0.5));
                 // assign data point to cluster of minimum distance
                 d3.select(this)
                   .attr("fill", d3.color(color).brighter(0.5))
