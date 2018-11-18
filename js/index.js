@@ -1,3 +1,8 @@
+//Colin Brown
+//Rui Ming
+
+//For hull k-means code please see
+//http://bl.ocks.org/feyderm/75c18a9143aac50a24e392762f10d6a4
 
 $(document).ready(function(){
 
@@ -18,6 +23,8 @@ $(document).ready(function(){
         function resetActives(){
             var opendocs = $('#wp').find('.drag');
             if(opendocs.length){
+                //This was a fun little piece of code to write, it just grabs the ids of all open docs
+                // and toggles their respective list items on
                 opendocs.map(function(a,b,c){$('#'+$(b).prop('id')+'-li').toggleClass('active')});
             }
         }
@@ -87,7 +94,6 @@ $(document).ready(function(){
                         $('#'+d.replace('.','')).unbind('draggable').draggable({stack:'.drag',containment: "parent"}).dblclick(function(){
                             $(this).remove();
                             $('#'+d.replace('.','')+'-li').toggleClass('active'); //Change the color of the ID box.
-                            //$("#p1").css("background-color", "#aaa");
                         });
                     }
                     //if the document has been displaied, delete it.
