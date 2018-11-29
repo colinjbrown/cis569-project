@@ -5,6 +5,7 @@ import string
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.manifold import TSNE
+from sklearn.manifold import MDS
 
 # Download punkt if needed
 # nltk.download('punkt')
@@ -28,6 +29,10 @@ x = v.fit_transform(df['Text'])
 tsne_reduced = TSNE(n_components=2).fit_transform(x.toarray())
 df['tsne0'] = tsne_reduced[:, 0]
 df['tsne1'] = tsne_reduced[:, 1]
+
+mds_reduced = MDS(n_components=2).fit_transform(x.toarray())
+df['mds0'] = mds_reduced[:, 0]
+df['mds1'] = mds_reduced[:, 1]
 
 # Finally output our new dataset
 df.to_json('reduced-data.json', orient='index')
