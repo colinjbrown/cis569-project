@@ -16,9 +16,17 @@ $(document).ready(function(){
   } );
 
     // Initalize widgets
-    $( "input" ).checkboxradio();
+    $( ".plots input" ).checkboxradio();
     $( ".plots").controlgroup();
     $( ".plots input" ).toggleClass('isDisabled',true);
+
+
+    var num_clusters = 7;
+
+    var spinner = $( "#spinner" ).spinner();
+    spinner.spinner( "value" ,num_clusters);
+    $("#spinner").toggleClass('isDisabled',true);
+
 
         //Ensure active documents are still highlighted in the list post sort
         function resetActives(){
@@ -38,7 +46,7 @@ $(document).ready(function(){
 
         var data_cluster = {};
 
-        var keymaps = {'tsne':{'x':'tsne0','y':'tsne1'},'mds':{'x':'mds0','y':'mds1'},'pca':{'x':'pc0','y':'pc1'}};
+        var keymaps = {'tsne':{'x':'tsne0','y':'tsne1'},'mds':{'x':'mds0','y':'mds1'},'pca':{'x':'pca0','y':'pca1'}};
 
     // dims
         var margin = { top: 60, right: 0, bottom: 50, left: 50 },
@@ -62,17 +70,15 @@ $(document).ready(function(){
         var circles = svg.append("g")
                          .attr("id", "circles");
 
-
-        var num_clusters = 7;
-
-
-        var clusters = d3.range(0, num_clusters).map((n) => n.toString());
-
-        // costs for each iteration
-        var costs = [];
+        var clusters,costs;
 
 
         function add_initial_hulls(){
+            clusters = d3.range(0, num_clusters).map((n) => n.toString());
+
+            // costs for each iteration
+            costs = [];
+
             hulls.selectAll("path")
                  .data(clusters)
                  .enter()
@@ -286,18 +292,35 @@ $(document).ready(function(){
 
         }
 
-        start_clustering(keymaps['tsne'],data_obj);
+
+        var curr_map = keymaps['tsne'];
+        start_clustering(curr_map,data_obj);
+
+
+
+        function change_method(d){
+            curr_map = keymaps[this.id];
+            restart_clustering(d);
+        }
 
         function restart_clustering(d){
             $('#viz svg g').empty();
             add_initial_hulls();
             done = false;
             $("#sort").toggleClass('isDisabled',true);
-            $('.plots input').toggleClass('isDisabled',true);
-            start_clustering(keymaps[this.id],data_obj);
+            $('input').toggleClass('isDisabled',true);
+            start_clustering(curr_map,data_obj);
         }
 
-        $('.plots input').on("change",restart_clustering);
+        spinner.on('change',function(){
+            var val = spinner.spinner( "value" )
+            if(Number.isInteger(val) && val > 0 && val <= 10){
+                num_clusters = spinner.spinner( "value" );
+                restart_clustering();
+            }
+        })
+
+        $('.plots input').on("change",change_method);
 
         });
 
