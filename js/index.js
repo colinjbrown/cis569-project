@@ -11,13 +11,10 @@ $(document).ready(function(){
     $( function() {
     $( "#clear" ).button();
     $( "#clear" ).click( function( event ) {
-      console.log("Clear");
       $('.drag.card').remove();
       $('#sortable li p').toggleClass('active',false);
     } );
   } );
-
-
 
         //Ensure active documents are still highlighted in the list post sort
         function resetActives(){
@@ -28,7 +25,6 @@ $(document).ready(function(){
                 opendocs.map(function(a,b,c){$('#'+$(b).prop('id')+'-li').toggleClass('active')});
             }
         }
-
 
         var done = false;
         var original_order, tsne_x, tsne_y;
@@ -151,7 +147,6 @@ $(document).ready(function(){
 
                     }
                 ).style("color",function (d) {
-                    console.log(done);
 
                     if(done){
                         return d3.schemeCategory10[data_cluster[d]];
@@ -212,7 +207,8 @@ $(document).ready(function(){
         //This also uses the ... (spread) operator which is part of ES6
         var d = Object.keys(data).map(function(f){return {'File Name':f, ...data[f]};})
 
-        function compare_top(key){
+        //use a closure here since we want to do multiple sorts
+        function create_compare(key){
             function compare(a, b) {
                 const  tsnea = a[key];
                 const tsneb = b[key];
@@ -228,22 +224,9 @@ $(document).ready(function(){
         return compare
         }
 
-        tsne_x = d.sort(compare_top('tsne0')).map(d => d['File Name']);
+        tsne_x = d.sort(create_compare('tsne0')).map(d => d['File Name']);
 
-        function compare_y(a, b) {
-            const  tsnea = a.tsne1;
-            const tsneb = b.tsne1;
-
-          let comparison = 0;
-          if (tsnea > tsneb) {
-            comparison = 1;
-          } else if (tsnea < tsneb) {
-            comparison = -1;
-          }
-          return comparison;
-        }
-
-        tsne_y = d.sort(compare_top('tsne1')).map(d => d['File Name']);
+        tsne_y = d.sort(create_compare('tsne1')).map(d => d['File Name']);
 
 
         $( function() {
@@ -457,16 +440,21 @@ $(document).ready(function(){
                    .attr("cy", (d) => y(d.y))
             .on("mouseover",function (d) {
                 $('#details').empty();
+                d3.select(this).attr('stroke','black');
+                $('#'+(d['File Name'])+'-li').toggleClass('active-doc',true);
                 Object.keys(d).map(function (a) {
                     var detailpanel = d3.select('#details');
                     detailpanel.append('p').text(a +': '+ d[a]);
                 });
+            })
+            .on("mouseout",function (d){
+                d3.select(this).attr('stroke','none');
+                $('#'+(d['File Name'])+'-li').toggleClass('active-doc',false);
+            })
+            .on("click",function (d){
+                openWSDocument(false,d['File Name'],d['Text']);
             });
         }
-
-
-
-
 
     //$( ".drag" ).unbind("draggable").draggable({ containment: "parent"});
         //let the IDs in the list can be ordered by mouse.
@@ -474,4 +462,3 @@ $(document).ready(function(){
         $( "#sortable" ).disableSelection();
 
     });
-
