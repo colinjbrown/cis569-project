@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.manifold import TSNE
 from sklearn.manifold import MDS
+from sklearn.decomposition import PCA
 
 # Download punkt if needed
 # nltk.download('punkt')
@@ -26,9 +27,13 @@ x = v.fit_transform(df['Text'])
 # TSNE is good for visualization of high dimensional data
 # It's primarily used for dimensionality reduction in place of methods like PCA
 # Please see https://lvdmaaten.github.io/tsne/ for more information
-tsne_reduced = TSNE(n_components=2).fit_transform(x.toarray())
+tsne_reduced = TSNE(n_components=2,init='pca').fit_transform(x.toarray())
 df['tsne0'] = tsne_reduced[:, 0]
 df['tsne1'] = tsne_reduced[:, 1]
+
+pca_reduced = PCA(n_components=2).fit_transform(x.toarray())
+df['pca0'] = pca_reduced[:, 0]
+df['pca1'] = pca_reduced[:, 1]
 
 mds_reduced = MDS(n_components=2).fit_transform(x.toarray())
 df['mds0'] = mds_reduced[:, 0]
