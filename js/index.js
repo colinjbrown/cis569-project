@@ -228,29 +228,19 @@ $(document).ready(function(){
 
         tsne_y = d.sort(create_compare('tsne1')).map(d => d['File Name']);
 
-
-        $( function() {
-            //Don't enable until after creating clusters
-            $( "#tsnex" ).button();
-            $( "#tsnex" ).click( function( event ) {
-
-                  $('#sortable').empty();
-                  make_list(tsne_x);
-
-            } );
-          } );
-
+        [{'id':'#tsnex','value':tsne_x},{'id':'#tsney','value':tsne_y}].forEach(
+            function(obj){
                 $( function() {
-            //Don't enable until after creating clusters
-            $( "#tsney" ).button();
-            $( "#tsney" ).click( function( event ) {
+                    //Don't enable until after creating clusters
+                    $(obj.id ).button();
+                    $( obj.id ).click( function( event ) {
+                          console.log(obj.id);
+                          $('#sortable').empty();
+                          make_list(obj.value);
 
-                  $('#sortable').empty();
-                  make_list(tsne_y);
-
-            } );
-          } );
-
+                    } );
+                  } );
+            });
 
         //Map principal components to x and y
             d.forEach(d => {
