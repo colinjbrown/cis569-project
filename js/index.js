@@ -212,20 +212,23 @@ $(document).ready(function(){
         //This also uses the ... (spread) operator which is part of ES6
         var d = Object.keys(data).map(function(f){return {'File Name':f, ...data[f]};})
 
-        function compare_x(a, b) {
-            const  tsnea = a.tsne0;
-            const tsneb = b.tsne0;
-
-          let comparison = 0;
-          if (tsnea > tsneb) {
-            comparison = 1;
-          } else if (tsnea < tsneb) {
-            comparison = -1;
-          }
-          return comparison;
+        function compare_top(key){
+            function compare(a, b) {
+                const  tsnea = a[key];
+                const tsneb = b[key];
+    
+              let comparison = 0;
+              if (tsnea > tsneb) {
+                comparison = 1;
+              } else if (tsnea < tsneb) {
+                comparison = -1;
+              }
+              return comparison;
+            }
+        return compare
         }
 
-        tsne_x = d.sort(compare_x).map(d => d['File Name']);
+        tsne_x = d.sort(compare_top('tsne0')).map(d => d['File Name']);
 
         function compare_y(a, b) {
             const  tsnea = a.tsne1;
@@ -240,7 +243,7 @@ $(document).ready(function(){
           return comparison;
         }
 
-        tsne_y = d.sort(compare_y).map(d => d['File Name']);
+        tsne_y = d.sort(compare_top('tsne1')).map(d => d['File Name']);
 
 
         $( function() {
