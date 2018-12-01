@@ -10,7 +10,7 @@
       <link rel="stylesheet" href="css/style.css">
       <link rel="stylesheet" href="css/bootstrap.css">
       <link rel="stylesheet" href="css/mdb.css">
-  
+
 </head>
 
 <body>
@@ -51,7 +51,20 @@
             
         </div>
 
-        <div class="column" id="viz"><div id="clusters"></div><p id="details"></p></div>
+        <div class="column" id="viz">
+            <h2>Plot Mode</h2>
+
+    <legend>Select a plot type: </legend>
+      <div class="plots">
+      <label for="tsne">t-SNE</label>
+    <input type="radio" name="plot" id="tsne" checked>
+    <label for="pca">PCA</label>
+    <input type="radio" name="plot" id="pca">
+    <label for="mds">MDS</label>
+    <input type="radio" name="plot" id="mds">
+          </div>
+
+            <div id="clusters"></div><p id="details"></p></div>
 
     </div>
 

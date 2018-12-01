@@ -6,7 +6,6 @@
 
 $(document).ready(function(){
 
-
     //Add clear button to empty workspace fast
     $( function() {
     $( "#clear" ).button();
@@ -15,6 +14,11 @@ $(document).ready(function(){
       $('#sortable li p').toggleClass('active',false);
     } );
   } );
+
+    // Initalize widgets
+    $( "input" ).checkboxradio();
+    $( ".plots").controlgroup();
+    $( ".plots input" ).toggleClass('isDisabled',true);
 
         //Ensure active documents are still highlighted in the list post sort
         function resetActives(){
@@ -29,7 +33,12 @@ $(document).ready(function(){
         var done = false;
         var original_order, tsne_x, tsne_y;
 
+
+        var data_obj;
+
         var data_cluster = {};
+
+        var keymaps = {'tsne':{'x':'tsne0','y':'tsne1'},'mds':{'x':'mds0','y':'mds1'},'pca':{'x':'pc0','y':'pc1'}};
 
     // dims
         var margin = { top: 60, right: 0, bottom: 50, left: 50 },
@@ -62,22 +71,27 @@ $(document).ready(function(){
         // costs for each iteration
         var costs = [];
 
-        hulls.selectAll("path")
-             .data(clusters)
-             .enter()
-             .append("path")
-             .attr("class", "hull")
-             .attr("id", d => "hull_" + d)
-            .on('mouseover',function (f) {
-                d3.selectAll('.cluster_'+f).attr('stroke','black');
-            }).on('mouseout',function (f) {
-                d3.selectAll('.cluster_'+f).attr('stroke','none');
-        }).on('click',function (f) {
 
-            d3.selectAll('.cluster_'+f).data().forEach(function (d) {
-                openWSDocument(false,d['File Name'],d['Text']);
+        function add_initial_hulls(){
+            hulls.selectAll("path")
+                 .data(clusters)
+                 .enter()
+                 .append("path")
+                 .attr("class", "hull")
+                 .attr("id", d => "hull_" + d)
+                .on('mouseover',function (f) {
+                    d3.selectAll('.cluster_'+f).attr('stroke','black');
+                }).on('mouseout',function (f) {
+                    d3.selectAll('.cluster_'+f).attr('stroke','none');
+            }).on('click',function (f) {
+
+                d3.selectAll('.cluster_'+f).data().forEach(function (d) {
+                    openWSDocument(false,d['File Name'],d['Text']);
+                });
             });
-        });
+        }
+
+        add_initial_hulls();
 
         function openWSDocument(removeFlag,d,text)
         {
@@ -108,14 +122,7 @@ $(document).ready(function(){
                     $('#'+d.replace('.','')+'-li').toggleClass('active');
         }
 
-
-
     d3.json("https://raw.githubusercontent.com/colinjbrown/cis569-project1/master/reduced-data.json").then(function(data) {
-
-
-
-
-
 
         function make_list(docs) {
 
@@ -157,12 +164,9 @@ $(document).ready(function(){
             resetActives();
         }
 
-
         original_order = Object.keys(data);
 
         make_list(original_order);
-
-
 
         $( function() {
             //Don't enable until after creating clusters
@@ -191,32 +195,25 @@ $(document).ready(function(){
             } );
           } );
 
-
-
-
         /*
         Just so you know the replace ('.','') is to ensure that the id meets css id valid standards in HTML4
         ID and NAME tokens must begin with a letter ([A-Za-z]) and may be followed by any number of letters, digits ([0-9]), hyphens ("-"), underscores ("_"), colons (":"), and periods (".").
          */
 
-
-
-
-
         //Change data representation for easier plotting
         //This also uses the ... (spread) operator which is part of ES6
-        var d = Object.keys(data).map(function(f){return {'File Name':f, ...data[f]};})
+        data_obj = Object.keys(data).map(function(f){return {'File Name':f, ...data[f]};})
 
         //use a closure here since we want to do multiple sorts
         function create_compare(key){
             function compare(a, b) {
-                const  tsnea = a[key];
-                const tsneb = b[key];
+                const  obja = a[key];
+                const objb = b[key];
     
               let comparison = 0;
-              if (tsnea > tsneb) {
+              if (obja > objb) {
                 comparison = 1;
-              } else if (tsnea < tsneb) {
+              } else if (obja < objb) {
                 comparison = -1;
               }
               return comparison;
@@ -224,62 +221,83 @@ $(document).ready(function(){
         return compare
         }
 
-        tsne_x = d.sort(create_compare('tsne0')).map(d => d['File Name']);
-
-        tsne_y = d.sort(create_compare('tsne1')).map(d => d['File Name']);
-
-        [{'id':'#tsnex','value':tsne_x},{'id':'#tsney','value':tsne_y}].forEach(
-            function(obj){
-                $( function() {
-                    //Don't enable until after creating clusters
-                    $(obj.id ).button();
-                    $( obj.id ).click( function( event ) {
-                          console.log(obj.id);
-                          $('#sortable').empty();
-                          make_list(obj.value);
-
-                    } );
-                  } );
-            });
-
-        //Map principal components to x and y
-            d.forEach(d => {
-                d.x = +d.tsne0;
-                d.y = +d.tsne1;
-            });
-
-            setScaleDomains(d);
-            plotCircles(d);
-
-            //To start off with our initial K-means we randomly assign centroids for each of our num_clusters
-            var initialCentroids = clusters.map(() => d[Math.round(d3.randomUniform(0, d.length)())]);
 
 
-            assignCluster(initialCentroids);
-            addHull();
 
-            costs.push(computeCost());
 
-            var iterate = d3.interval(() => {
+        function start_clustering(keymap,d){
 
-                var c = computeCentroids();
+            tsne_x = d.sort(create_compare(keymap['x'])).map(d => d['File Name']);
 
-                assignCluster(c);
+            tsne_y = d.sort(create_compare(keymap['y'])).map(d => d['File Name']);
+
+            [{'id':'#tsnex','value':tsne_x},{'id':'#tsney','value':tsne_y}].forEach(
+                function(obj){
+                    $( function() {
+                        //Don't enable until after creating clusters
+                        $(obj.id ).button();
+                        $( obj.id ).click( function( event ) {
+                              console.log(obj.id);
+                              $('#sortable').empty();
+                              make_list(obj.value);
+
+                        } );
+                      } );
+                });
+
+            //Map principal components to x and y
+                d.forEach(d => {
+                    d.x = +d[keymap['x']];
+                    d.y = +d[keymap['y']];
+                });
+
+                setScaleDomains(d);
+                plotCircles(d);
+
+                //To start off with our initial K-means we randomly assign centroids for each of our num_clusters
+                var initialCentroids = clusters.map(() => d[Math.round(d3.randomUniform(0, d.length)())]);
+
+
+                assignCluster(initialCentroids);
                 addHull();
 
-                var cost = computeCost();
+                costs.push(computeCost());
 
-                // stop iterating when algorithm coverges to local minimum
-                if (cost == costs[costs.length - 1]) {
+                var iterate = d3.interval(() => {
 
-                    displayStats(costs);
-                    iterate.stop();
-                }
+                    var c = computeCentroids();
 
-                costs.push(cost)
+                    assignCluster(c);
+                    addHull();
 
-            }, 500);
+                    var cost = computeCost();
 
+                    // stop iterating when algorithm coverges to local minimum
+                    if (cost == costs[costs.length - 1]) {
+
+                        displayStats(costs);
+                        iterate.stop();
+                    }
+
+                    costs.push(cost)
+
+                }, 500);
+
+
+        }
+
+        start_clustering(keymaps['tsne'],data_obj);
+
+        function restart_clustering(d){
+            $('#viz svg g').empty();
+            add_initial_hulls();
+            done = false;
+            $("#sort").toggleClass('isDisabled',true);
+            $('.plots input').toggleClass('isDisabled',true);
+            start_clustering(keymaps[this.id],data_obj);
+        }
+
+        $('.plots input').on("change",restart_clustering);
 
         });
 
@@ -315,6 +333,9 @@ $(document).ready(function(){
 
             //Enable sorting
             $("#sort").toggleClass('isDisabled',false);
+
+            //Enable switching plot type
+            $("input").toggleClass('isDisabled',false);
 
             //This is my favorite piece of code I've ever written...
             //This creates a dictionary of final clusters and filenames
