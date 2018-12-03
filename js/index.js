@@ -237,7 +237,7 @@ $(document).ready(function(){
 
             tsne_y = d.sort(create_compare(keymap['y'])).map(d => d['File Name']);
 
-            [{'id':'#tsnex','value':tsne_x},{'id':'#tsney','value':tsne_y}].forEach(
+            [{'id':'#sortx','value':tsne_x},{'id':'#sorty','value':tsne_y}].forEach(
                 function(obj){
                     $( function() {
                         //Don't enable until after creating clusters
