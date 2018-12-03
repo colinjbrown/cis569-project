@@ -128,13 +128,28 @@ $(document).ready(function(){
                     $('#'+d.replace('.','')+'-li').toggleClass('active');
         }
 
-    d3.json("https://raw.githubusercontent.com/colinjbrown/cis569-project1/master/reduced-data.json").then(function(data) {
+    //use a closure here since we want to do multiple sorts
+    function create_compare(key){
+        function compare(a, b) {
+            const  obja = a[key];
+            const objb = b[key];
 
-        function make_list(docs) {
+          let comparison = 0;
+          if (obja > objb) {
+            comparison = 1;
+          } else if (obja < objb) {
+            comparison = -1;
+          }
+          return comparison;
+        }
+    return compare
+    }
 
+    function make_list(docs,data) {
             var doc_list = d3.select('ul').selectAll('li').data(docs, function(d){return d;});
 
-
+            console.log(docs);
+            console.log(data);
             doc_list
                 .enter()
                 //Creat document id in the list for each document.
@@ -170,9 +185,13 @@ $(document).ready(function(){
             resetActives();
         }
 
+    d3.json("https://raw.githubusercontent.com/colinjbrown/cis569-project1/master/reduced-data.json").then(function(data) {
+
+
+
         original_order = Object.keys(data);
 
-        make_list(original_order);
+        make_list(original_order,data);
 
         $( function() {
             //Don't enable until after creating clusters
@@ -184,7 +203,7 @@ $(document).ready(function(){
                   $('#sortable').empty();
                   //Creates a new mapping based on clusters
                   var newmap = Array.apply(null, {length: num_clusters}).map(Number.call, Number).reduce(function (p1, p2, p3) { return [...p1, ...d3.selectAll('.cluster_'+p2).data().map(d => d['File Name'])]; },[]);
-                  make_list(newmap);
+                  make_list(newmap,data);
                 }
 
             } );
@@ -196,7 +215,7 @@ $(document).ready(function(){
             $( "#reset" ).click( function( event ) {
 
                   $('#sortable').empty();
-                  make_list(original_order);
+                  make_list(original_order,data);
 
             } );
           } );
@@ -209,26 +228,6 @@ $(document).ready(function(){
         //Change data representation for easier plotting
         //This also uses the ... (spread) operator which is part of ES6
         data_obj = Object.keys(data).map(function(f){return {'File Name':f, ...data[f]};})
-
-        //use a closure here since we want to do multiple sorts
-        function create_compare(key){
-            function compare(a, b) {
-                const  obja = a[key];
-                const objb = b[key];
-    
-              let comparison = 0;
-              if (obja > objb) {
-                comparison = 1;
-              } else if (obja < objb) {
-                comparison = -1;
-              }
-              return comparison;
-            }
-        return compare
-        }
-
-
-
 
 
         function start_clustering(keymap,d){
@@ -245,7 +244,7 @@ $(document).ready(function(){
                         $( obj.id ).click( function( event ) {
                               console.log(obj.id);
                               $('#sortable').empty();
-                              make_list(obj.value);
+                              make_list(obj.value,data);
 
                         } );
                       } );
@@ -258,7 +257,7 @@ $(document).ready(function(){
                 });
 
                 setScaleDomains(d);
-                plotCircles(d);
+                plotCircles(d,data);
 
                 //To start off with our initial K-means we randomly assign centroids for each of our num_clusters
                 var initialCentroids = clusters.map(() => d[Math.round(d3.randomUniform(0, d.length)())]);
@@ -462,7 +461,11 @@ $(document).ready(function(){
              y.domain(d3.extent(d, d => d.y));
         }
 
-        function plotCircles(d) {
+        function createDistance(a,b){
+            return Math.sqrt((Math.pow(a.x-b.x,2)+Math.pow(a.y-b.y,2)));
+        }
+
+        function plotCircles(d,data) {
 
             circles.selectAll("circle")
                    .data(d)
@@ -485,8 +488,18 @@ $(document).ready(function(){
                 d3.select(this).attr('stroke','none');
                 $('#'+(d['File Name'])+'-li').toggleClass('active-doc',false);
             })
-            .on("click",function (d){
-                openWSDocument(false,d['File Name'],d['Text']);
+            .on("click",function (f){
+                if(d3.event.ctrlKey){
+                    var obj = d.map(function (a,b) {
+                        return {'key': a['File Name'], 'dist': createDistance(f, a)};
+                    });
+                    var obj = obj.sort(create_compare('dist')).map(d => d['key']);
+                    $('#sortable').empty();
+                    make_list(obj,data);
+                }
+                else{
+                    openWSDocument(false,f['File Name'],f['Text']);
+                }
             });
         }
 
