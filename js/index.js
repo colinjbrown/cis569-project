@@ -12,6 +12,7 @@ $(document).ready(function(){
     $( "#clear" ).click( function( event ) {
       $('.drag.card').remove();
       $('#sortable li p').toggleClass('active',false);
+      $(".active-circle").toggleClass('active-circle',false);
     } );
   } );
 
@@ -115,6 +116,7 @@ $(document).ready(function(){
                         $('#'+d.replace('.','')).unbind('draggable').draggable({stack:'.drag',containment: "parent"}).dblclick(function(){
                             $(this).remove();
                             $('#'+d.replace('.','')+'-li').toggleClass('active'); //Change the color of the ID box.
+                            $('#'+d.replace('.','')+'-circle').toggleClass('active-circle');
                         });
                     }
                     //if the document has been displaied, delete it.
@@ -126,6 +128,7 @@ $(document).ready(function(){
                         return;
                     }
                     $('#'+d.replace('.','')+'-li').toggleClass('active');
+                    $('#'+d.replace('.','')+'-circle').toggleClass('active-circle');
         }
 
     //use a closure here since we want to do multiple sorts
@@ -475,6 +478,7 @@ $(document).ready(function(){
                    .attr("r", 5)
                    .attr("cx", (d) => x(d.x))
                    .attr("cy", (d) => y(d.y))
+                   .attr("id", (d) => d['File Name'].replace('.','')+'-circle')
             .on("mouseover",function (d) {
                 $('#details').empty();
                 d3.select(this).attr('stroke','black');

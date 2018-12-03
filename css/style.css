@@ -45,7 +45,7 @@ h3.label{
 }
 
 .drag{
-    width:50%;
+    width:45%;
     height:auto;
     padding: 0.5em;
     background-color:#ccc;
@@ -80,6 +80,11 @@ h3.label{
     margin-bottom:2vh;
     margin-top:2vh;
     height:25vh;
+}
+
+.active-circle{
+    stroke:white;
+    r:8;
 }
 
 #project-details{
