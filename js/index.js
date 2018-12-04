@@ -23,10 +23,20 @@ $(document).ready(function(){
 
 
     var num_clusters = 7;
+    var scale_x = scale_y = 1.0;
 
     var spinner = $( "#spinner" ).spinner();
     spinner.spinner( "value" ,num_clusters);
     $("#spinner").toggleClass('isDisabled',true);
+
+    var xscaler = $( "#x_scale" ).spinner();
+    xscaler.spinner( "value" ,scale_x);
+    $("#x_scale").toggleClass('isDisabled',true);
+
+    var yscaler = $( "#y_scale" ).spinner();
+    yscaler.spinner( "value" ,scale_y);
+    $("#y_scale").toggleClass('isDisabled',true);
+
 
 
         //Ensure active documents are still highlighted in the list post sort
@@ -320,7 +330,24 @@ $(document).ready(function(){
                 num_clusters = spinner.spinner( "value" );
                 restart_clustering();
             }
-        })
+        });
+
+        xscaler.on('change',function(){
+            var val = parseFloat(xscaler.spinner( "value" ));
+            if(!isNaN(val) && val >= 0 && val <= 1){
+                scale_x = val;
+                restart_clustering();
+            }
+        });
+
+        yscaler.on('change',function(){
+            var val = parseFloat(yscaler.spinner( "value" ));
+            if(!isNaN(val) && val >= 0 && val <= 1){
+                scale_y = val;
+                restart_clustering();
+            }
+        });
+
 
         $('.plots input').on("change",change_method);
 
@@ -452,7 +479,7 @@ $(document).ready(function(){
         function computeDistances(centroids, d_pt) {
 
             var dists = centroids.map(centroid => {
-                var dist = Math.sqrt(Math.pow(d_pt.x - centroid.x, 2) + Math.pow(d_pt.y - centroid.y, 2));
+                var dist = Math.sqrt(Math.pow(d_pt.x - centroid.x, 2) *scale_x + Math.pow(d_pt.y - centroid.y, 2)*scale_y);
                 return dist;
             })
             return dists;
