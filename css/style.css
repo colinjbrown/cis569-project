@@ -74,12 +74,12 @@ h3.label{
 
 #project-info, #project-details{
     display:inline-block;
-    width:40vw;
+    width:90vw;
     margin-left:2vw;
     margin-right:2vw;
     margin-bottom:2vh;
     margin-top:2vh;
-    height:25vh;
+    height:30vh;
 }
 
 .active-circle{
