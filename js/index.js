@@ -37,7 +37,10 @@ $(document).ready(function(){
     yscaler.spinner( "value" ,scale_y);
     $("#y_scale").toggleClass('isDisabled',true);
 
-
+    function recreateURL(d_cluster){
+        var dlurl = URL.createObjectURL(new Blob([JSON.stringify(d_cluster)], {type: "text/plain;charset=utf-8"}));
+        $('#dl-clusters').attr("href",dlurl).attr("download", "clusters.json");
+    }
 
         //Ensure active documents are still highlighted in the list post sort
         function resetActives(){
@@ -161,8 +164,6 @@ $(document).ready(function(){
     function make_list(docs,data) {
             var doc_list = d3.select('ul').selectAll('li').data(docs, function(d){return d;});
 
-            console.log(docs);
-            console.log(data);
             doc_list
                 .enter()
                 //Creat document id in the list for each document.
@@ -393,6 +394,7 @@ $(document).ready(function(){
             //This creates a dictionary of final clusters and filenames
             data_cluster = Array.apply(null, {length: num_clusters}).map(Number.call, Number).reduce(function (p1, p2, p3) { return Object.assign({},p1,[,...d3.selectAll('.cluster_'+p2).data().map(d => d['File Name'])].reduce(function(a,d){a[d] = p2; return a},{})); },[]);
 
+            recreateURL(data_cluster);
 
             done=true;
 
@@ -527,6 +529,15 @@ $(document).ready(function(){
                     var obj = obj.sort(create_compare('dist')).map(d => d['key']);
                     $('#sortable').empty();
                     make_list(obj,data);
+                }
+                else if(d3.event.shiftKey){
+                    curr_cluster = data_cluster[f['File Name']];
+                    new_cluster = (curr_cluster+1 < num_clusters) ? curr_cluster+1 : 0;
+                    $(this).toggleClass('cluster_'+curr_cluster,false).toggleClass('cluster+'+new_cluster,true).css("fill",d3.schemeCategory10[new_cluster]);
+                    $('#'+f['File Name'].replace('.','')+'-li').css("color",d3.schemeCategory10[new_cluster]);
+                    data_cluster[f['File Name']] = new_cluster;
+                    addHull();
+                    recreateURL(data_cluster);
                 }
                 else{
                     openWSDocument(false,f['File Name'],f['Text']);
